@@ -1,36 +1,129 @@
 package com.duongkhai.calculatorclassic.presentation.ui.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.duongkhai.calculatorclassic.data.model.ButtonCalculatorModel
+import com.duongkhai.calculatorclassic.presentation.CalculatorAction
+import com.duongkhai.calculatorclassic.presentation.CalculatorOperation
 import com.duongkhai.calculatorclassic.utils.ButtonType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class HomeViewModel: ViewModel() {
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    var state by mutableStateOf(CalculatorUiState())
+
+    fun onAction(action: CalculatorAction) {
+        when(action) {
+            is CalculatorAction.Number -> enterNumber(action.number)
+            is CalculatorAction.Delete -> delete()
+            is CalculatorAction.Clear -> state = CalculatorUiState()
+            is CalculatorAction.Operation -> enterOperation(action.operation)
+            is CalculatorAction.Decimal -> enterDecimal()
+            is CalculatorAction.Calculate -> calculate()
+        }
+    }
+
+    private fun enterOperation(operation: CalculatorOperation) {
+        if(state.number1.isNotBlank()) {
+            state = state.copy(operation = operation)
+        }
+    }
+
+    private fun calculate() {
+        val number1 = state.number1.toDoubleOrNull()
+        val number2 = state.number2.toDoubleOrNull()
+        if(number1 != null && number2 != null) {
+            val result = when(state.operation) {
+                is CalculatorOperation.Add -> number1 + number2
+                is CalculatorOperation.Subtract -> number1 - number2
+                is CalculatorOperation.Multiply -> number1 * number2
+                is CalculatorOperation.Divide -> number1 / number2
+                is CalculatorOperation.Percent -> number1 % number2
+                null -> return
+            }
+            state = state.copy(
+                number1 = result.toString().take(15),
+                number2 = "",
+                operation = null
+            )
+        }
+    }
+
+    private fun delete() {
+        when {
+            state.number2.isNotBlank() -> state = state.copy(
+                number2 = state.number2.dropLast(1)
+            )
+            state.operation != null -> state = state.copy(
+                operation = null
+            )
+            state.number1.isNotBlank() -> state = state.copy(
+                number1 = state.number1.dropLast(1)
+            )
+        }
+    }
+
+    private fun enterDecimal() {
+        if(state.operation == null && !state.number1.contains(".") && state.number1.isNotBlank()) {
+            state = state.copy(
+                number1 = state.number1 + "."
+            )
+            return
+        } else if(!state.number2.contains(".") && state.number2.isNotBlank()) {
+            state = state.copy(
+                number2 = state.number2 + "."
+            )
+        }
+    }
+
+    private fun enterNumber(number: Int) {
+        if(state.operation == null) {
+            if(state.number1.length >= MAX_NUM_LENGTH) {
+                return
+            }
+            state = state.copy(
+                number1 = state.number1 + number
+            )
+            return
+        }
+        if(state.number2.length >= MAX_NUM_LENGTH) {
+            return
+        }
+        state = state.copy(
+            number2 = state.number2 + number
+        )
+    }
+
+    companion object {
+        private const val MAX_NUM_LENGTH = 8
+    }
 }
 
-data class HomeUiState(
-    val isProcessing: Boolean = false,
-    val buttonList: List<ButtonCalculatorModel> = listOf(
-        ButtonCalculatorModel("C", ButtonType.C),
-        ButtonCalculatorModel("DEL", ButtonType.DELETE),
-        ButtonCalculatorModel("%", ButtonType.PERCENT),
-        ButtonCalculatorModel("/", ButtonType.DIVIDE),
-        ButtonCalculatorModel("7", ButtonType.SEVEN),
-        ButtonCalculatorModel("8", ButtonType.EIGHT),
-        ButtonCalculatorModel("9", ButtonType.NINE),
-        ButtonCalculatorModel("x", ButtonType.MULTI),
-        ButtonCalculatorModel("4", ButtonType.FOUR),
-        ButtonCalculatorModel("5", ButtonType.FIVE),
-        ButtonCalculatorModel("6", ButtonType.SIX),
-        ButtonCalculatorModel("-", ButtonType.SUB),
-        ButtonCalculatorModel("1", ButtonType.ONE),
-        ButtonCalculatorModel("2", ButtonType.TWO),
-        ButtonCalculatorModel("3", ButtonType.THREE),
-        ButtonCalculatorModel("+", ButtonType.PLUS),
+data class CalculatorUiState(
+    val number1: String = "",
+    val number2: String = "",
+    val operation: CalculatorOperation? = null,
+    val calculatorButtons: List<ButtonCalculatorModel> = listOf(
+        ButtonCalculatorModel("C", CalculatorAction.Clear, Color(0xFFA5B2C5)),
+        ButtonCalculatorModel("⌫", CalculatorAction.Delete, Color(0xFFA5B2C5)),
+        ButtonCalculatorModel("%", CalculatorAction.Operation(CalculatorOperation.Percent), Color(0xFFA5B2C5)),
+        ButtonCalculatorModel("/", CalculatorAction.Operation(CalculatorOperation.Divide), Color(0xFFC9641A)),
+        ButtonCalculatorModel("7", CalculatorAction.Number(7),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("8", CalculatorAction.Number(8),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("9", CalculatorAction.Number(9),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("*", CalculatorAction.Operation(CalculatorOperation.Multiply),Color(0xFFC9641A)),
+        ButtonCalculatorModel("4", CalculatorAction.Number(4),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("5", CalculatorAction.Number(5),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("6", CalculatorAction.Number(6),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("-", CalculatorAction.Operation(CalculatorOperation.Subtract),Color(0xFFC9641A)),
+        ButtonCalculatorModel("1", CalculatorAction.Number(1),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("2", CalculatorAction.Number(2),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("3", CalculatorAction.Number(3),Color(0xFFBABFC9)),
+        ButtonCalculatorModel("+", CalculatorAction.Operation(CalculatorOperation.Add),Color(0xFFC9641A)),
     )
 )

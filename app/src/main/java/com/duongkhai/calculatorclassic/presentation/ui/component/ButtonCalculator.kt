@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -43,21 +44,36 @@ fun ButtonCalculator(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(30.dp),
     fontSize: TextUnit = 30.sp,
-    buttonColor: Color = Color.White,
     buttonCalculatorModel: ButtonCalculatorModel,
     onClick: (ButtonCalculatorModel) -> Unit,
     aspectRatio: Float = 1f,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(
-            modifier = Modifier
-                .aspectRatio(aspectRatio).bounceClick().clickable(
-                    onClick = {onClick(buttonCalculatorModel)},
-                    indication = null,
-                    interactionSource = remember {
-                        MutableInteractionSource()
-                    }
-                ),
+            modifier = if (aspectRatio != 0f) {
+                Modifier
+                    .bounceClick()
+                    .aspectRatio(aspectRatio)
+                    .fillMaxSize()
+                    .clickable(
+                        onClick = { onClick(buttonCalculatorModel) },
+                        indication = null,
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        }
+                    )
+            } else {
+                Modifier
+                    .bounceClick()
+                    .fillMaxSize()
+                    .clickable(
+                        onClick = { onClick(buttonCalculatorModel) },
+                        indication = null,
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        }
+                    )
+            },
             shape = shape,
             elevation = CardDefaults.elevatedCardElevation(
                 defaultElevation = 20.dp
@@ -76,7 +92,7 @@ fun ButtonCalculator(
                 )
             ),
             colors = CardDefaults.cardColors(
-                containerColor = buttonColor
+                containerColor = buttonCalculatorModel.colorButton
             ),
         ) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -103,7 +119,6 @@ fun ButtonCalculator(
 private fun PreviewButtonCalculator() {
     ButtonCalculator(
         modifier = Modifier.fillMaxSize(),
-        buttonColor = Color(0xFFA0ADBF),
         buttonCalculatorModel = ButtonCalculatorModel(),
         onClick = {/* no-op */ }
     )
