@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "52165175983",
+    "project_id": "calculator-classic-2f809",
+    "storage_bucket": "calculator-classic-2f809.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52165175983:android:ce838c35752965b6ddc25a",
+        "android_client_info": {
+          "package_name": "com.duongkhai.calculatorclassic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgS_fPlrUhKyrH9Wrc4JzQlKufh3NvUPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
