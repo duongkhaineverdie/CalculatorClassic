@@ -89,7 +89,8 @@ fun HomeScreen(
                         .padding(5.dp)
                         .weight(2f),
                     buttonCalculatorModel = zero,
-                    onClick = { onClickButton(it) })
+                    onClick = { onClickButton(it) },
+                    aspectRatio = 2f)
                 ButtonCalculator(
                     modifier = Modifier
                         .padding(5.dp)

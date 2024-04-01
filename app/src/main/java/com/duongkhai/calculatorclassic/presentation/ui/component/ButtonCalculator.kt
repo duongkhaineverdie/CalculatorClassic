@@ -46,11 +46,12 @@ fun ButtonCalculator(
     buttonColor: Color = Color.White,
     buttonCalculatorModel: ButtonCalculatorModel,
     onClick: (ButtonCalculatorModel) -> Unit,
+    aspectRatio: Float = 1f,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(
             modifier = Modifier
-                .aspectRatio(1f).bounceClick().clickable(
+                .aspectRatio(aspectRatio).bounceClick().clickable(
                     onClick = {onClick(buttonCalculatorModel)},
                     indication = null,
                     interactionSource = remember {
