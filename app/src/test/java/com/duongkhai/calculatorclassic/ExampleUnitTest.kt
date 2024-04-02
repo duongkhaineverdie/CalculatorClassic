@@ -1,4 +1,4 @@
-package com.duongkhai.calculatorclassic
+package com.dkneverd.calculatorclassic
 
 import org.junit.Test
 

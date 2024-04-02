@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.duongkhai.calculatorclassic"
+    namespace = "com.dkneverd.calculatorclassic"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.duongkhai.calculatorclassic"
+        applicationId = "com.dkneverd.calculatorclassic"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
